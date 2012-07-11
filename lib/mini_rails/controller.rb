@@ -10,7 +10,9 @@ module MiniRails
         self.send :remove_method, method_name
         self.send :define_method, method_name do
           self.send hidden_method_name
-          render_view(self.class, method_name)
+          iv_map = Hash.new
+          self.instance_variables.each {|iv| iv_map[iv] = self.instance_variable_get(iv) }
+          render_view(self.class, method_name, iv_map)
         end
         @@allow_override = true
       end

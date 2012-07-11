@@ -8,7 +8,7 @@ describe MiniRails, "#controllers" do
         @name = "Lukasz"
       end
       
-      def render_view(klass, method_name) #mock
+      def render_view(klass, method_name, iv_map) #mock
         "Hello #{@name}"
       end
     end
@@ -22,10 +22,9 @@ describe MiniRails, "#views" do
     f = File.open('spec/views/list.erb')
     file_content = f.read
     f.close
-    @counter = 3
-    @name = "Lukasz"
+
     view = MiniRails::View.new(file_content)
-    rendered_view = view.render(binding)
+    rendered_view = view.render({"@name" => "Lukasz", "@counter" => 3})
     rendered_view.scan(/[012]/).length.should eq(3)  
     rendered_view.scan(/Lukasz/).should_not be_empty
   end
