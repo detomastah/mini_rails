@@ -24,6 +24,14 @@ end
 
 RSpec::Core::RakeTask.new(:spec)
 
+desc "Server"
+task :server do
+  require 'rack'
+  require 'rack/showexceptions'
+  puts "Server Init"
+  Rack::Handler::Mongrel.run MiniRails::Server.new, :Port => 9999
+end
+
 task :default => :spec
 
 

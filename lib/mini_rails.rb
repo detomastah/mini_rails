@@ -1,6 +1,6 @@
 require 'mini_rails/view'
 require 'mini_rails/controller'
-
+require 'mini_rails/server'
 
 module MiniRails
   module VERSION #:nodoc:
