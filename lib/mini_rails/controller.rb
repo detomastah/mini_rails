@@ -17,5 +17,15 @@ module MiniRails
         @@allow_override = true
       end
     end
+    
+    def render_view(klass, method_name, iv_map)
+      template_file = MiniRails::View::select_template(klass, method_name)
+      f = File.open(template_file)
+      template_string = f.read
+      f.close
+      view = MiniRails::View.new(template_string)
+      rendered_view = view.render(iv_map)
+      rendered_view
+    end
   end
 end

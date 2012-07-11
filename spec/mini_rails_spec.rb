@@ -1,5 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../lib')
-require 'mini_rails'
+require 'spec_helper'
 
 describe MiniRails, "#controllers" do
   it "should create method and render greeting" do
@@ -16,7 +15,6 @@ describe MiniRails, "#controllers" do
   end
 end
 
-
 describe MiniRails, "#views" do
   it "should render view" do
     f = File.open('spec/views/list.erb')
@@ -27,6 +25,10 @@ describe MiniRails, "#views" do
     rendered_view = view.render({"@name" => "Lukasz", "@counter" => 3})
     rendered_view.scan(/[012]/).length.should eq(3)  
     rendered_view.scan(/Lukasz/).should_not be_empty
+  end
+  
+  it "should choose proper template" do
+    puts MiniRails::View.select_template(TestController, :select)
   end
 end
 

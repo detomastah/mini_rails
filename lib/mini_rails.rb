@@ -6,7 +6,6 @@ module MiniRails
 
     STRING = [MAJOR, MINOR, TINY].join('.')
   end
-
   
   SKIP_VERIFY_ENV = ['test']
 
@@ -21,8 +20,15 @@ module MiniRails
 
   class MiniRailsError < StandardError
   end
+  
+  class << self
+    def root
+      File.expand_path(".")
+    end
+  end
 end
 
+require 'active_support/all'
 require 'mini_rails/view'
 require 'mini_rails/controller'
 require 'mini_rails/server'
