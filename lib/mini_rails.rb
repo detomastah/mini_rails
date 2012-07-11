@@ -9,15 +9,6 @@ module MiniRails
   
   SKIP_VERIFY_ENV = ['test']
 
-  def self.configuration
-    @configuration ||= Configuration.new
-  end
-
-  def self.configure
-    config = configuration
-    yield(config)
-  end
-
   class MiniRailsError < StandardError
   end
   
