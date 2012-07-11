@@ -31,3 +31,21 @@ describe MiniRails, "#views" do
     rendered_view.scan(/Lukasz/).should_not be_empty
   end
 end
+
+describe MiniRails, "#routes" do
+  it "should route to TestController::test" do
+    class TestController < MiniRails::Controller
+      def test
+      end
+      
+      def render_view(klass, method_name) #mock
+        [klass, method_name]
+      end
+    end
+    
+    router = Router.draw do |map|
+      map("/namespace/:controller/:action")
+    end
+    
+  end
+end
