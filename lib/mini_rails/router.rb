@@ -3,43 +3,34 @@ module MiniRails
   end
   
   class Route
-    attr_accessor :parse_data, :execution_data, :route_str, :tail
+    attr_accessor :tokens, :execution_data
     
     def self.parse(route_str)
       route = self.new
-      route.route_str = String.new(route_str)
-      route.parse_data = []
-      param_regexp = /:[a-z]+[a-z0-9_]*/
-      
-      index = route_str =~ param_regexp
-      while index
-        skip_chars = index  
-        name = route_str[index..-1].match(param_regexp).to_s
-        route.parse_data << [skip_chars, name[1..-1].to_sym]
-        
-        route_str = route_str[(index + name.length)..-1]
-        index = route_str =~ param_regexp
-      end
-      #is something left?
-      route.tail = route_str
+      route.tokens = route_str.split(/[\/\.]/)
       return route
     end
+
     
     def match(request_path)
-      processed = 0
-      param_value_regexp = /[^\/]*/
-      self.execution_data = Hash.new
-      self.parse_data.each do |parse_pair|
-        request_path = request_path[parse_pair[0]..-1]
-        param_value = request_path.match(param_value_regexp).to_s
-        self.execution_data[parse_pair[1]] = param_value
-        request_path = request_path[param_value.length..-1]
-        processed += 1
+      request_tokens = request_path.split(/[\/\.]/)
+      if request_tokens.length != self.tokens.length
+        return false
+      else
+        self.execution_data = Hash.new
+        self.tokens.length.times do |token_index|
+          if self.tokens[token_index][0..0] == ":"
+            param_name = self.tokens[token_index][1..-1].to_sym
+            param_value = request_tokens[token_index]
+            self.execution_data[param_name] = param_value
+          else
+            return false if self.tokens[token_index] != request_tokens[token_index]
+          end
+        end
       end
-      return processed == parse_data.length && self.tail == request_path
+      return true
     end
-  end
-
+  end    
   
   class Router
     def initialize
