@@ -1,7 +1,3 @@
-require 'mini_rails/view'
-require 'mini_rails/controller'
-require 'mini_rails/server'
-
 module MiniRails
   module VERSION #:nodoc:
     MAJOR = 0
@@ -26,3 +22,8 @@ module MiniRails
   class MiniRailsError < StandardError
   end
 end
+
+require 'mini_rails/view'
+require 'mini_rails/controller'
+require 'mini_rails/server'
+require 'mini_rails/router'

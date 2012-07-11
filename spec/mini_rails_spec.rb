@@ -12,7 +12,6 @@ describe MiniRails, "#controllers" do
         "Hello #{@name}"
       end
     end
-    puts TestController.new.say_hello.inspect
     TestController.new.say_hello.should eq("Hello Lukasz")
   end
 end
@@ -33,9 +32,23 @@ describe MiniRails, "#views" do
 end
 
 describe MiniRails, "#routes" do
-  it "should route to TestController::test" do
+  it "should find a proper route" do
+    router = MiniRails::Router.new do |map|
+      map.default("/namespace/:controller/elphel")
+      map.default("/namespace/:controller/:action")
+      map.default("/namespace/:controller/:action/omega")
+    end
+    
+    route = router.find("/namespace/test/start")
+
+    route.execution_data[:controller].should eq("test")
+    route.execution_data[:action].should eq("start")
+  end
+  
+=begin  
+  it "should route to TestController::start" do
     class TestController < MiniRails::Controller
-      def test
+      def start
       end
       
       def render_view(klass, method_name) #mock
@@ -43,9 +56,12 @@ describe MiniRails, "#routes" do
       end
     end
     
-    router = Router.draw do |map|
-      map("/namespace/:controller/:action")
+    router = MiniRails::Router.new do |map|
+      map.default("/namespace/:controller/:action")
     end
     
+    router.find("/namespace/test/start")
+    
   end
+=end
 end
