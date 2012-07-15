@@ -1,16 +1,17 @@
 require 'spec_helper'
 
+class TestController < MiniRails::Controller
+  def say_hello
+    @name = "Lukasz"
+  end
+  
+  def render_view(klass, method_name, iv_map) #mock
+    "Hello #{@name}"
+  end
+end
+
 describe MiniRails, "#controllers" do
   it "should create method and render greeting" do
-    class TestController < MiniRails::Controller
-      def say_hello
-        @name = "Lukasz"
-      end
-      
-      def render_view(klass, method_name, iv_map) #mock
-        "Hello #{@name}"
-      end
-    end
     TestController.new.say_hello.should eq("Hello Lukasz")
   end
 end
@@ -28,13 +29,13 @@ describe MiniRails, "#views" do
   end
   
   it "should choose proper template" do
-    puts MiniRails::View.select_template(TestController, :select)
+    MiniRails::View.select_template(TestController, :select).should match(/\/app\/views\/test\/select.erb\z/)
   end
 end
 
 describe MiniRails, "#routes" do
   it "should find a proper route" do
-    router = MiniRails::Router.new do |map|
+    router = MiniRails::DefaultRouter.new do |map|
       map.default("/namespace/:controller/elphel")
       map.default("/namespace/:controller/:action")
       map.default("/namespace/:controller/:action/omega")
@@ -46,23 +47,12 @@ describe MiniRails, "#routes" do
     route.execution_data[:action].should eq("start")
   end
   
-=begin  
-  it "should route to TestController::start" do
-    class TestController < MiniRails::Controller
-      def start
-      end
-      
-      def render_view(klass, method_name) #mock
-        [klass, method_name]
-      end
+  it "should execute route" do
+    router = MiniRails::DefaultRouter.new do |map|
+      map.default("/:controller/:action")
     end
     
-    router = MiniRails::Router.new do |map|
-      map.default("/namespace/:controller/:action")
-    end
-    
-    router.find("/namespace/test/start")
-    
+    result = router.execute("/test/say_hello")
+    result.should eq("Hello Lukasz")
   end
-=end
 end

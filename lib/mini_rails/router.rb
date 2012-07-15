@@ -2,7 +2,23 @@ module MiniRails
   class NoRouteFoundError < MiniRailsError
   end
   
-  class Route
+  class << self
+    def router=(router) 
+      @router = router
+    end
+    
+    def router
+      @router
+    end
+  end
+  
+  class AbstractRouter
+    def execute(request_path)
+      raise "Unimplemented"
+    end
+  end
+
+  class DefaultRoute
     attr_accessor :tokens, :execution_data
     
     def self.parse(route_str)
@@ -30,9 +46,15 @@ module MiniRails
       end
       return true
     end
+    
+    def execute
+      controller = self.execution_data[:controller] + "_controller"
+      action = self.execution_data[:action]
+      controller.camelize.constantize.new.send(action)
+    end
   end    
   
-  class Router
+  class DefaultRouter < AbstractRouter
     def initialize
       @routes = []
       if block_given?
@@ -50,9 +72,18 @@ module MiniRails
       end
       nil
     end
+    
+    def execute(request_path)
+      route = self.find(request_path)
+      if route
+        route.execute
+      else
+        raise NoRouteFoundError("Routing failed")
+      end
+    end
 
     def method_missing(name, *args, &block)
-      @routes << Route.parse(args[0])
+      @routes << DefaultRoute.parse(args[0])
     end
   end
 end

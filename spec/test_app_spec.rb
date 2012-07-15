@@ -7,13 +7,14 @@ class << MiniRails
   end
 end
 
+class TestController < MiniRails::Controller
+  def index
+    @name = "Lukasz"
+  end
+end
+
 describe MiniRails, "#test rendering" do
   it "should create method and render greeting" do
-    class TestController < MiniRails::Controller
-      def index
-        @name = "Lukasz"
-      end
-    end
     
     TestController.new.index.strip.should eq("Hello Lukasz")
   end
