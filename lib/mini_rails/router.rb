@@ -12,12 +12,6 @@ module MiniRails
     end
   end
   
-  class AbstractRouter
-    def execute(request_path)
-      raise "Unimplemented"
-    end
-  end
-
   class DefaultRoute
     attr_accessor :tokens, :execution_data
     
@@ -53,8 +47,10 @@ module MiniRails
       controller.camelize.constantize.new.send(action)
     end
   end    
-  
-  class DefaultRouter < AbstractRouter
+
+
+  #every router must implement execute(request_path)  
+  class DefaultRouter
     def initialize
       @routes = []
       if block_given?
@@ -78,7 +74,7 @@ module MiniRails
       if route
         route.execute
       else
-        raise NoRouteFoundError("Routing failed")
+        raise NoRouteFoundError, "Route not found in routing table"
       end
     end
 
