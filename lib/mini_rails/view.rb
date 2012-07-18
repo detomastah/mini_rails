@@ -1,13 +1,7 @@
 require 'erb'
 
 module MiniRails  
-  class AbstractReponse
-    def render(custom_binding)
-      raise "Abstract Class"
-    end
-  end
-  
-  class View < AbstractReponse
+  class View
     def initialize(template_string)
       @template_string = template_string
     end
